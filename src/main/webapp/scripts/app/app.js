@@ -2,6 +2,7 @@
 
 angular.module('pruebacherryApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprecht.translate', 
     'ngResource', 'ngCookies', 'ngAria', 'ngCacheBuster', 'ngFileUpload',
+    // jhipster-needle-angularjs-add-module JHipster will add new module here
     'ui.bootstrap', 'ui.router',  'infinite-scroll', 'angular-loading-bar'])
 
     .run(function ($rootScope, $location, $window, $http, $state, $translate, Language, Auth, Principal, ENV, VERSION) {
@@ -28,6 +29,7 @@ angular.module('pruebacherryApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'p
             if (Principal.isIdentityResolved()) {
                 Auth.authorize();
             }
+			
             
             // Update the language
             Language.getCurrent().then(function (language) {
@@ -103,6 +105,7 @@ angular.module('pruebacherryApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'p
         $httpProvider.interceptors.push('errorHandlerInterceptor');
         $httpProvider.interceptors.push('authExpiredInterceptor');
         $httpProvider.interceptors.push('notificationInterceptor');
+        // jhipster-needle-angularjs-add-interceptor JHipster will add new application interceptor here
         
         // Initialize angular-translate
         $translateProvider.useLoader('$translatePartialLoader', {
@@ -119,6 +122,7 @@ angular.module('pruebacherryApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'p
         tmhDynamicLocaleProvider.storageKey('NG_TRANSLATE_LANG_KEY');
         
     })
+    // jhipster-needle-angularjs-add-config JHipster will add new application configuration here
     .config(['$urlMatcherFactoryProvider', function($urlMatcherFactory) {
         $urlMatcherFactory.type('boolean', {
             name : 'boolean',
@@ -128,4 +132,4 @@ angular.module('pruebacherryApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'p
             is: function(val) { return [true,false,0,1].indexOf(val) >= 0 },
             pattern: /bool|true|0|1/
         });
-    }]);;
+    }]);
