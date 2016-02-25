@@ -124,8 +124,12 @@ public class UserResource {
     public ResponseEntity<ManagedUserDTO> updateUser(@RequestBody ManagedUserDTO managedUserDTO) throws URISyntaxException {
         log.debug("REST request to update User : {}", managedUserDTO);
         Optional<User> existingUser = userRepository.findOneByEmail(managedUserDTO.getEmail());
-        if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(managedUserDTO.getLogin()))) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("user-management", "emailexists", "Email already in use")).body(null);
+        if (existingUser.isPresent() && (!existingUser.get().getId().equals(managedUserDTO.getId()))) {
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("user-management", "emailexists", "E-mail already in use")).body(null);
+        }
+        existingUser = userRepository.findOneByLogin(managedUserDTO.getLogin());
+        if (existingUser.isPresent() && (!existingUser.get().getId().equals(managedUserDTO.getId()))) {
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("user-management", "userexists", "Login already in use")).body(null);
         }
         return userRepository
             .findOneById(managedUserDTO.getId())
@@ -142,7 +146,7 @@ public class UserResource {
                     authority -> authorities.add(authorityRepository.findOne(authority))
                 );
                 return ResponseEntity.ok()
-                    .headers(HeaderUtil.createEntityUpdateAlert("user", managedUserDTO.getLogin()))
+                    .headers(HeaderUtil.createAlert("user-management.updated", managedUserDTO.getLogin()))
                     .body(new ManagedUserDTO(userRepository
                         .findOne(managedUserDTO.getId())));
             })
@@ -171,7 +175,7 @@ public class UserResource {
     /**
      * GET  /users/:login -> get the "login" user.
      */
-    @RequestMapping(value = "/users/{login}",
+    @RequestMapping(value = "/users/{login:[_'.@a-z0-9-]+}",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
